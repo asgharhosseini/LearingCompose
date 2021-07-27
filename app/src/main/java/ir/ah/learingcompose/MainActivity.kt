@@ -18,6 +18,7 @@ import androidx.compose.ui.text.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import ir.ah.learingcompose.ui.theme.LearingComposeTheme
+import kotlinx.coroutines.*
 import java.lang.reflect.*
 import kotlin.random.*
 
@@ -25,23 +26,46 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            
-            Column(Modifier.fillMaxSize()) {
-                val color = remember {
-                    mutableStateOf(Color.Yellow)
-                }
-                ColorBox(modifier = Modifier
-                    .weight(1f)
-                    .fillMaxSize()){
-                    color.value=it
-                }
-                Box(modifier = Modifier
-                    .background(color.value)
-                    .weight(1f)
-                    .fillMaxSize()
-                    )
+            val scaffoldState = rememberScaffoldState()
+            var textFieldState by remember {
+                mutableStateOf("")
             }
-            
+            val scope= rememberCoroutineScope()
+
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                scaffoldState = scaffoldState
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(30.dp)
+                ) {
+                    OutlinedTextField(
+                        value = textFieldState,
+                        label = {
+                            Text(text = "Enter User Name")
+                        },
+                        onValueChange = {
+                            textFieldState = it
+                        },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Button(onClick = {
+                        scope.launch {
+                            scaffoldState.snackbarHostState.showSnackbar(" hello $textFieldState")
+
+                        }
+
+                    }){
+                        Text(text = "Click Me")
+                    }
+                }
+            }
 
 
         }
@@ -50,9 +74,9 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun ColorBox(
-    modifier: Modifier=Modifier,
-    colorUpdate:(Color)->Unit
-){
+    modifier: Modifier = Modifier,
+    colorUpdate: (Color) -> Unit
+) {
     Box(
         modifier = modifier
             .background(Color.Red)
@@ -69,8 +93,6 @@ fun ColorBox(
             })
 
 }
-
-
 
 
 @Composable
