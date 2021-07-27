@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -15,6 +16,8 @@ import androidx.compose.ui.graphics.painter.*
 import androidx.compose.ui.layout.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.text.*
+import androidx.compose.ui.text.font.*
+import androidx.compose.ui.text.style.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import ir.ah.learingcompose.ui.theme.LearingComposeTheme
@@ -26,44 +29,17 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val scaffoldState = rememberScaffoldState()
-            var textFieldState by remember {
-                mutableStateOf("")
-            }
-            val scope= rememberCoroutineScope()
+            LazyColumn {
+                itemsIndexed(
+                    listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+                ) {index, item ->  
 
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                scaffoldState = scaffoldState
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(30.dp)
-                ) {
-                    OutlinedTextField(
-                        value = textFieldState,
-                        label = {
-                            Text(text = "Enter User Name")
-                        },
-                        onValueChange = {
-                            textFieldState = it
-                        },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.height(20.dp))
-                    Button(onClick = {
-                        scope.launch {
-                            scaffoldState.snackbarHostState.showSnackbar(" hello $textFieldState")
-
-                        }
-
-                    }){
-                        Text(text = "Click Me")
-                    }
+                    Text(
+                        text = "item $item",
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp))
                 }
             }
 
