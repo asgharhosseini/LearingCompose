@@ -7,7 +7,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.*
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.*
@@ -19,27 +19,59 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
 import ir.ah.learingcompose.ui.theme.LearingComposeTheme
 import java.lang.reflect.*
+import kotlin.random.*
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val painter = painterResource(id = R.drawable.food1)
-            val title = "Asghar hosseini"
-            val contentDescription = "Asghar hosseini"
-
-            Box(
-                modifier =
-                Modifier
-                    .fillMaxSize(0.5f)
-                    .padding(16.dp)
-            ) {
-                ImageCard(painter = painter, title = title, contentDescription = contentDescription)
+            
+            Column(Modifier.fillMaxSize()) {
+                val color = remember {
+                    mutableStateOf(Color.Yellow)
+                }
+                ColorBox(modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize()){
+                    color.value=it
+                }
+                Box(modifier = Modifier
+                    .background(color.value)
+                    .weight(1f)
+                    .fillMaxSize()
+                    )
             }
+            
+
 
         }
     }
 }
+
+@Composable
+fun ColorBox(
+    modifier: Modifier=Modifier,
+    colorUpdate:(Color)->Unit
+){
+    Box(
+        modifier = modifier
+            .background(Color.Red)
+            .clickable {
+                colorUpdate(
+                    Color(
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        Random.nextFloat(),
+                        1f
+                    )
+                )
+
+            })
+
+}
+
+
+
 
 @Composable
 fun ImageCard(
