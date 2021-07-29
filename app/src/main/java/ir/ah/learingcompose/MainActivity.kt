@@ -3,6 +3,8 @@ package ir.ah.learingcompose
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
@@ -20,6 +22,8 @@ import androidx.compose.ui.text.font.*
 import androidx.compose.ui.text.style.*
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.*
+
+
 import ir.ah.learingcompose.ui.theme.LearingComposeTheme
 import kotlinx.coroutines.*
 import java.lang.reflect.*
@@ -29,17 +33,43 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            LazyColumn {
-                itemsIndexed(
-                    listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
-                ) {index, item ->  
 
-                    Text(
-                        text = "item $item",
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp))
+            var sizeState by remember { mutableStateOf(200.dp) }
+            val size by animateDpAsState(
+                targetValue = sizeState,
+                  tween(durationMillis = 3000, delayMillis = 300, easing = LinearOutSlowInEasing)
+                //  spring(Spring.DampingRatioHighBouncy)
+                   /* keyframes { durationMillis =5000
+                        sizeState at 0 with LinearEasing
+                        sizeState * 1.5f at 1000 with FastOutLinearInEasing
+                        sizeState * 2f at 5000
+                    }*/
+
+
+            )
+            val infiniteTransition = rememberInfiniteTransition()
+            val color by infiniteTransition.animateColor(
+                initialValue = Color.Black,
+                targetValue = Color.White,
+                animationSpec = infiniteRepeatable(
+                    tween(durationMillis = 3000, delayMillis = 300, easing = LinearOutSlowInEasing),
+                    repeatMode = RepeatMode.Reverse
+
+                )
+            )
+
+
+            Box(
+                modifier = Modifier
+                    .size(size)
+                    .background(color),
+                contentAlignment = Alignment.Center
+            ) {
+                Button(onClick = {
+                    sizeState += 50.dp
+                }) {
+                    Text(text = "go")
+
                 }
             }
 
