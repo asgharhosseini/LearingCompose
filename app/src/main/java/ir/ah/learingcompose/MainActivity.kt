@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.foundation.shape.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.*
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.Modifier
@@ -40,38 +42,18 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black)
+            Surface(
+                color=Color.Black,
+                modifier = Modifier.fillMaxSize()
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .border(2.dp, Color.Green, RoundedCornerShape(10.dp))
-                        .padding(20.dp)
-                ) {
-                    var value by remember {
-                      mutableStateOf(0f)
-                    }
-                    val barCount =20
-                    MusicKnob(
-                        Modifier.size(100.dp)
-                    ){
-                        value =it
-                    }
-                    Spacer(modifier = Modifier.width(20.dp))
-                    ValueBar(
+                DropDown(text = "Asghar ", Modifier.padding(16.dp)) {
+                    Text(text = "Asghar Hosseini",
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(30.dp),
-                        activeBars =(barCount*value).toInt(),
-                        barCount = barCount
-                    )
-
+                            .height(100.dp)
+                            .background(Color.Green))
                 }
+
 
             }
 
@@ -79,6 +61,60 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+
+@Composable
+fun DropDown(
+    text: String,
+    modifier: Modifier = Modifier,
+    initiallyOpened: Boolean = false,
+    content: @Composable () -> Unit
+) {
+    var isOpen by remember {
+        mutableStateOf(initiallyOpened)
+    }
+    val alpha = animateFloatAsState(
+        targetValue = if (isOpen) 1f else 0f,
+        animationSpec = tween(durationMillis = 300)
+    )
+    val rotateX = animateFloatAsState(
+        targetValue = if (isOpen) 0f else -90f,
+        animationSpec = tween(durationMillis = 300)
+    )
+
+    Column(modifier = modifier.fillMaxWidth()) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically, modifier = modifier.fillMaxWidth()
+        ) {
+            Text(text = text, color = Color.White, fontSize = 16.sp)
+            Icon(imageVector = Icons.Default.ArrowDropDown,
+                contentDescription = "open or close drop Down",
+                tint = Color.White,
+                modifier = modifier
+                    .clickable {
+                        isOpen = !isOpen
+                    }
+                    .scale(1f, if (isOpen) -1f else 1f))
+
+        }
+        Spacer(modifier = modifier.height(10.dp))
+        Box(contentAlignment = Alignment.Center,
+        modifier = modifier
+            .fillMaxWidth()
+            .graphicsLayer {
+                transformOrigin = TransformOrigin(0.5f, 0f)
+                rotationX = rotateX.value
+            }
+            .alpha(alpha.value)) {
+            content()
+            
+        }
+
+    }
+
+}
+
 
 @Composable
 fun ValueBar(
